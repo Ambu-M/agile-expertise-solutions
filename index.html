@@ -1,0 +1,226 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agile Expertise Solutions</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+    <!-- Navigation -->
+    <nav class="bg-blue-600 text-white p-4 sticky top-0 z-10">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-bold">Agile Expertise Solutions</h1>
+            <ul class="flex space-x-6">
+                <li><a href="#home" class="hover:underline">Home</a></li>
+                <li><a href="#about" class="hover:underline">About</a></li>
+                <li><a href="#services" class="hover:underline">Services</a></li>
+                <li><a href="#articles" class="hover:underline">Articles</a></li>
+                <li><a href="#testimonials" class="hover:underline">Testimonials</a></li>
+                <li><a href="#contact" class="hover:underline">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="bg-blue-800 text-white py-20">
+        <div class="container mx-auto text-center">
+            <h2 class="text-4xl font-bold mb-4">Transform Your Projects with Agile Excellence</h2>
+            <p class="text-xl mb-6">15 Years of Expertise in Agile Project Management and Scrum Coaching</p>
+            <a href="#contact" class="bg-yellow-500 text-black px-6 py-3 rounded-full font-semibold hover:bg-yellow-400">Get Started</a>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-16">
+        <div class="container mx-auto text-center">
+            <h2 class="text-3xl font-bold mb-8">About Me</h2>
+            <p class="text-lg max-w-2xl mx-auto mb-6">
+                With 15 years of experience as an Agile Project Management Consultant and Certified Scrum Coach, I empower teams and organizations to achieve their goals through effective Agile practices. My mission is to drive success by fostering collaboration, adaptability, and continuous improvement.
+            </p>
+            <p class="text-lg max-w-2xl mx-auto">
+                I specialize in transforming complex projects into streamlined, high-performing workflows, ensuring delivery of value at every step.
+            </p>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="bg-gray-200 py-16">
+        <div class="container mx-auto">
+            <h2 class="text-3xl font-bold text-center mb-12">Services</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-4">Agile Project Management</h3>
+                    <p>Implement robust Agile frameworks to manage projects efficiently, ensuring timely delivery and stakeholder satisfaction.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-4">Scrum Coaching</h3>
+                    <p>Guide teams to master Scrum practices, improve collaboration, and maximize productivity through hands-on coaching.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-4">Training & Workshops</h3>
+                    <p>Customized training sessions to upskill teams in Agile methodologies, Scrum, and Kanban for sustainable success.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Articles Section -->
+    <section id="articles" class="py-16">
+        <div class="container mx-auto">
+            <h2 class="text-3xl font-bold text-center mb-12">Agile & Scrum Insights</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-4">The Power of Scrum Values</h3>
+                    <!-- Placeholder for image -->
+                    <img src="images/scrum-values.png" alt="Ghibli-style Scrum Values" class="w-full h-auto rounded-lg mb-4">
+                    <p>
+                        Scrum thrives on five core values: commitment, courage, focus, openness, and respect. These values foster trust and collaboration, enabling teams to navigate complex projects with confidence. Commitment ensures teams deliver on sprint goals, while courage empowers them to challenge inefficiencies. Focus keeps priorities clear, openness encourages transparent feedback, and respect builds a supportive environment. By embodying these values, Scrum teams create a culture of continuous improvement, delivering high-value outcomes efficiently.
+                    </p>
+                    <p class="mt-4 italic text-sm">
+                        <strong>Ghibli Image:</strong> A serene scene inspired by "My Neighbor Totoro," where Totoro and children gather under a giant camphor tree, symbolizing unity and trust as they share a moment of mutual respect amidst a lush, collaborative forest. (Replace with sourced image: images/scrum-values.png)
+                    </p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-4">Scaling Agile with Scrum</h3>
+                    <!-- Placeholder for image -->
+                    <img src="images/scaling-agile.png" alt="Ghibli-style Scaling Agile" class="w-full h-auto rounded-lg mb-4">
+                    <p>
+                        Scaling Agile across an organization requires aligning Scrum teams with strategic goals. The 3D Reality Model places teams at the core of transformation, emphasizing portfolio alignment, end-to-end value delivery, and cross-team collaboration. By focusing on these axes, organizations can avoid superficial Agile adoption and achieve true enterprise agility. Scrum’s iterative cycles and feedback loops ensure adaptability, making it ideal for complex, large-scale projects.
+                    </p>
+                    <p class="mt-4 italic text-sm">
+                        <strong>Ghibli Image:</strong> A dynamic scene inspired by "Princess Mononoke," depicting San and forest spirits working together to restore balance in a vast forest, representing cross-functional teams collaborating to achieve a shared vision. (Replace with sourced image: images/scaling-agile.png)
+                    </p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-4">Embracing the Agile Mindset</h3>
+                    <!-- Placeholder for image -->
+                    <img src="images/agile-mindset.png" alt="Ghibli-style Agile Mindset" class="w-full h-auto rounded-lg mb-4">
+                    <p>
+                        Transitioning to Agile requires more than adopting Scrum practices—it demands a cultural shift. Many organizations fall into "Fake Scrum," prioritizing processes over ownership. True Agile embraces self-management, radical transparency, and business value over rigid plans. By fostering a mindset of experimentation and adaptation, teams can overcome resistance and unlock creativity, delivering products that truly meet customer needs.
+                    </p>
+                    <p class="mt-4 italic text-sm">
+                        <strong>Ghibli Image:</strong> A vibrant scene inspired by "Spirited Away," where Chihiro leads a diverse group through the bathhouse, symbolizing a journey of growth and adaptation as they learn to work together in a complex, ever-changing environment. (Replace with sourced image: images/agile-mindset.png)
+                    </p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-4">Effective Sprint Planning in Scrum</h3>
+                    <!-- Placeholder for image -->
+                    <img src="images/sprint-planning.png" alt="Ghibli-style Sprint Planning" class="w-full h-auto rounded-lg mb-4">
+                    <p>
+                        Sprint planning sets the tone for a successful Scrum cycle. It involves defining a sprint goal, selecting backlog items, and estimating effort collaboratively. A well-planned sprint aligns the team on priorities and ensures deliverable increments. Key practices include involving the entire team, using story points for estimation, and keeping the sprint goal focused. Effective planning balances ambition with realism, fostering momentum and clarity.
+                    </p>
+                    <p class="mt-4 italic text-sm">
+                        <strong>Ghibli Image:</strong> A cozy scene inspired by "Kiki’s Delivery Service," where Kiki and friends gather around a table in a bakery, planning their day’s deliveries with enthusiasm and focus, symbolizing a team aligning on sprint goals. (Replace with sourced image: images/sprint-planning.png)
+                    </p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-4">Overcoming Common Agile Pitfalls</h3>
+                    <!-- Placeholder for image -->
+                    <img src="images/agile-pitfalls.png" alt="Ghibli-style Agile Pitfalls" class="w-full h-auto rounded-lg mb-4">
+                    <p>
+                        Agile transformations often face pitfalls like lack of leadership buy-in, unclear roles, or overemphasis on tools. These can derail progress and create frustration. To overcome them, ensure stakeholder alignment, clarify Scrum roles (e.g., Product Owner, Scrum Master), and prioritize people over processes. Regular retrospectives and open communication help teams address issues early, fostering resilience and continuous improvement.
+                    </p>
+                    <p class="mt-4 italic text-sm">
+                        <strong>Ghibli Image:</strong> A determined scene inspired by "Howl’s Moving Castle," where Sophie and Howl navigate a chaotic castle, symbolizing a team overcoming obstacles through communication and resilience. (Replace with sourced image: images/agile-pitfalls.png)
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section id="testimonials" class="py-16">
+        <div class="container mx-auto text-center">
+            <h2 class="text-3xl font-bold mb-12">What Clients Say</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <p class="italic mb-4">"Their expertise in Agile transformed our project delivery process, saving us time and resources."</p>
+                    <p class="font-semibold">- Jane Doe, Project Manager</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <p class="italic mb-4">"The Scrum coaching sessions were a game-changer for our team’s productivity and morale."</p>
+                    <p class="font-semibold">- John Smith, CTO</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="bg-blue-600 text-white py-16">
+        <div class="container mx-auto text-center">
+            <h2 class="text-3xl font-bold mb-8">Get in Touch</h2>
+            <p class="text-lg max-w-xl mx-auto mb-8">Ready to elevate your projects with Agile expertise? Contact me to discuss your needs.</p>
+            <div class="text-lg max-w-xl mx-auto mb-8">
+                <p>Email: <a href="mailto:ambu.mani30@gmail.com" class="underline">ambu.mani30@gmail.com</a></p>
+                <p>Phone: <a href="tel:+916364396154" class="underline">+91-6364396154</a></p>
+            </div>
+            <div class="max-w-md mx-auto">
+                <input type="text" placeholder="Your Name" class="w-full p-3 mb-4 rounded-lg text-black">
+                <input type="email" placeholder="Your Email" class="w-full p-3 mb-4 rounded-lg text-black">
+                <textarea placeholder="Your Message" class="w-full p-3 mb-4 rounded-lg text-black h-32"></textarea>
+                <button class="bg-yellow-500 text-black px-6 py-3 rounded-full font-semibold hover:bg-yellow-400">Send Message</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-6">
+        <div class="container mx-auto text-center">
+            <p>Email: <a href="mailto:ambu.mani30@gmail.com" class="underline">ambu.mani30@gmail.com</a> | Phone: <a href="tel:+916364396154" class="underline">+91-6364396154</a></p>
+            <p>© 2025 Agile Expertise Solutions. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>
